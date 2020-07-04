@@ -1,0 +1,24 @@
+onjoin:
+  - 'forcehotbar$menu:3'
+  - 'hotbar$cmd'
+items:
+  menu:
+    name: 'Item name'
+    material: BOW
+    lore:
+      - '&cLore of'
+      - '&fthe item'
+    amount: 1
+    permission: ''
+    function: menu
+    menu: first
+  cmd:
+    name: '&cCommand test'
+    material: COMMAND_BLOCK
+    amount: 1
+    permission: ''
+    limit: 1
+    function: command
+    commands:
+      - 'me Executed command...'
+      - 'CONSOLE$me %player% is an idiot :P'

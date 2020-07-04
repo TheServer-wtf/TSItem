@@ -1,0 +1,12 @@
+name: TSItem
+main: hu.Pdani.TSItem.TSItemPlugin
+version: '1.0.0'
+description: 'Custom item creator for TheServer.wtf'
+api-version: '1.16'
+authors: [Pdani001]
+website: 'www.pdani.hu'
+softdepend: [TSMenu]
+permissions:
+  tsitem.admin:
+    default: op
+    description: Permission to move or remove items from inventory
