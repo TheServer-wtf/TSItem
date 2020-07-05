@@ -1,6 +1,7 @@
 onjoin:
   - 'forcehotbar$menu:3'
   - 'hotbar$cmd'
+disableonjoin: false
 items:
   menu:
     name: 'Item name'
@@ -9,6 +10,7 @@ items:
       - '&cLore of'
       - '&fthe item'
     amount: 1
+    execute: 'menu'
     permission: ''
     function: menu
     menu: first

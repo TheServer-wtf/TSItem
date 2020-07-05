@@ -1,5 +1,6 @@
 package hu.Pdani.TSItem;
 
+import hu.Pdani.TSItem.listener.CommandListener;
 import hu.Pdani.TSItem.listener.InventoryListener;
 import hu.Pdani.TSItem.listener.PlayerListener;
 import hu.Pdani.TSMenu.TSMenuPlugin;
@@ -25,6 +26,7 @@ public class TSItemPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         saveDefaultConfig();
+        getCommand("tsitem").setExecutor(new CommandListener());
     }
 
     @Override

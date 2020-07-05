@@ -1,5 +1,6 @@
 package hu.Pdani.TSItem.listener;
 
+import hu.Pdani.TSItem.ItemManager;
 import hu.Pdani.TSItem.TSItemPlugin;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +28,33 @@ import java.util.regex.Pattern;
 
 public class PlayerListener implements Listener {
     private HashMap<Player,Long> last = new HashMap<>();
+    @EventHandler
+    public void preCmd(PlayerCommandPreprocessEvent event){
+        String cmd = event.getMessage();
+        Player player = event.getPlayer();
+        if(cmd.startsWith("/")){
+            cmd = rFirst(cmd,"/","");
+        }
+        ConfigurationSection sec = TSItemPlugin.getPlugin().getConfig().getConfigurationSection("items");
+        if(sec == null){
+            return;
+        }
+        for(String k : sec.getKeys(false)){
+            if(sec.isSet(k+".execute")){
+                String exec = sec.getString(k+".execute");
+                if(exec.equalsIgnoreCase(cmd)){
+                    event.setCancelled(true);
+                    String perm = ItemManager.getItemPerm(k);
+                    if((perm != null && !perm.isEmpty()) && !player.hasPermission(perm)){
+                        return;
+                    }
+                    ItemStack is = ItemManager.getItem(k);
+                    player.getInventory().addItem(is);
+                    break;
+                }
+            }
+        }
+    }
     @EventHandler
     public void onClick(PlayerInteractEvent event){
         if(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR){
@@ -102,6 +131,8 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         TSItemPlugin plugin = TSItemPlugin.getPlugin();
+        if(plugin.getConfig().getBoolean("disableonjoin",false))
+            return;
         NamespacedKey namekey = new NamespacedKey(plugin, "tsitem");
         Player player = event.getPlayer();
         PlayerInventory inv = player.getInventory();
@@ -128,44 +159,10 @@ public class PlayerListener implements Listener {
                             break;
                         }
                     }
-                    ConfigurationSection options = plugin.getConfig().getConfigurationSection("items."+item);
-                    if(options == null)
+                    String perm = ItemManager.getItemPerm(item);
+                    if((perm != null && !perm.isEmpty()) && !player.hasPermission(perm))
                         break;
-                    int i_dam = options.getInt("damage",0);
-                    int i_cmd = options.getInt("custommodeldata",-1);
-                    String i_name = options.getString("name",null);
-                    String i_perm = options.getString("permission");
-                    if(i_perm != null && !i_perm.isEmpty()){
-                        if(!player.hasPermission(i_perm))
-                            break;
-                    }
-                    String i_mat = options.getString("material","STONE");
-                    if(i_mat == null)
-                        i_mat = "STONE";
-                    int i_num = options.getInt("amount",1);
-                    if(i_num < 1)
-                        i_num = 1;
-                    List<String> i_lore = options.getStringList("lore");
-                    Material material = Material.getMaterial(i_mat.toUpperCase());
-                    if (material == null)
-                        material = Material.STONE;
-                    ItemStack is = new ItemStack(material,i_num);
-                    ItemMeta meta = is.getItemMeta();
-                    if(i_cmd > -1)
-                        meta.setCustomModelData(i_cmd);
-                    if(i_name != null)
-                        meta.setDisplayName(c(i_name));
-                    for(int i = 0; i < i_lore.size(); i++){
-                        i_lore.set(i, c(i_lore.get(i)));
-                    }
-                    meta.setLore(i_lore);
-                    meta.getPersistentDataContainer().set(namekey,PersistentDataType.STRING,item);
-                    is.setItemMeta(meta);
-                    if(meta instanceof Damageable){
-                        Damageable d = (Damageable) is.getItemMeta();
-                        d.setDamage(i_dam);
-                        is.setItemMeta((ItemMeta)d);
-                    }
+                    ItemStack is = ItemManager.getItem(item);
                     inv.setItem(pos,is);
                     break;
                 case "HOTBAR":
@@ -189,44 +186,10 @@ public class PlayerListener implements Listener {
                     }
                     if(pos == -1)
                         break;
-                    options = plugin.getConfig().getConfigurationSection("items."+item);
-                    if(options == null)
+                    perm = ItemManager.getItemPerm(item);
+                    if((perm != null && !perm.isEmpty()) && !player.hasPermission(perm))
                         break;
-                    i_dam = options.getInt("damage",0);
-                    i_cmd = options.getInt("custommodeldata",-1);
-                    i_name = options.getString("name",null);
-                    i_perm = options.getString("permission");
-                    if(i_perm != null && !i_perm.isEmpty()){
-                        if(!player.hasPermission(i_perm))
-                            break;
-                    }
-                    i_mat = options.getString("material","STONE");
-                    if(i_mat == null)
-                        i_mat = "STONE";
-                    i_num = options.getInt("amount",1);
-                    if(i_num < 1)
-                        i_num = 1;
-                    i_lore = options.getStringList("lore");
-                    material = Material.getMaterial(i_mat.toUpperCase());
-                    if (material == null)
-                        material = Material.STONE;
-                    is = new ItemStack(material,i_num);
-                    meta = is.getItemMeta();
-                    if(i_cmd > -1)
-                        meta.setCustomModelData(i_cmd);
-                    if(i_name != null)
-                        meta.setDisplayName(c(i_name));
-                    for(int i = 0; i < i_lore.size(); i++){
-                        i_lore.set(i, c(i_lore.get(i)));
-                    }
-                    meta.setLore(i_lore);
-                    meta.getPersistentDataContainer().set(namekey,PersistentDataType.STRING,item);
-                    is.setItemMeta(meta);
-                    if(meta instanceof Damageable){
-                        Damageable d = (Damageable) is.getItemMeta();
-                        d.setDamage(i_dam);
-                        is.setItemMeta((ItemMeta)d);
-                    }
+                    is = ItemManager.getItem(item);
                     inv.setItem(pos,is);
                     break;
                 default:

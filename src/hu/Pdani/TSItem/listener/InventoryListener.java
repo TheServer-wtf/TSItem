@@ -17,7 +17,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class InventoryListener implements Listener {
-    @EventHandler
+    /*@EventHandler
     public void itemClick(InventoryClickEvent event){
         TSItemPlugin plugin = TSItemPlugin.getPlugin();
         NamespacedKey namekey = new NamespacedKey(plugin, "tsitem");
@@ -48,7 +48,7 @@ public class InventoryListener implements Listener {
             if(!event.getWhoClicked().hasPermission("tsitem.admin"))
                 event.setCancelled(true);
         }
-    }
+    }*/
     @EventHandler
     public void itemDrop(PlayerDropItemEvent event){
         TSItemPlugin plugin = TSItemPlugin.getPlugin();
