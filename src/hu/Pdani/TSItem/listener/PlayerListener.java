@@ -50,7 +50,6 @@ public class PlayerListener implements Listener {
                     }
                     ItemStack is = ItemManager.getItem(k);
                     player.getInventory().addItem(is);
-                    break;
                 }
             }
         }
