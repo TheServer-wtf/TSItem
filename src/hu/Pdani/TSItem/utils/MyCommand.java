@@ -39,7 +39,7 @@ public class MyCommand extends AMyCommand {
                     items.add(i);
             }
         }
-        if(!sec.getKeys(false).contains(command.getName())){
+        if(!items.contains(command.getName())){
             return true;
         }
         if (commandSender instanceof Player){
