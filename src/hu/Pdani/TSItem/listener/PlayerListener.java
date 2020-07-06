@@ -4,22 +4,18 @@ import hu.Pdani.TSItem.ItemManager;
 import hu.Pdani.TSItem.TSItemPlugin;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import static hu.Pdani.TSItem.TSItemPlugin.c;
 import static hu.Pdani.TSItem.TSItemPlugin.rFirst;
 
 import java.util.HashMap;
@@ -28,32 +24,6 @@ import java.util.regex.Pattern;
 
 public class PlayerListener implements Listener {
     private HashMap<Player,Long> last = new HashMap<>();
-    @EventHandler
-    public void preCmd(PlayerCommandPreprocessEvent event){
-        String cmd = event.getMessage();
-        Player player = event.getPlayer();
-        if(cmd.startsWith("/")){
-            cmd = rFirst(cmd,"/","");
-        }
-        ConfigurationSection sec = TSItemPlugin.getPlugin().getConfig().getConfigurationSection("items");
-        if(sec == null){
-            return;
-        }
-        for(String k : sec.getKeys(false)){
-            if(sec.isSet(k+".execute")){
-                String exec = sec.getString(k+".execute");
-                if(exec.equalsIgnoreCase(cmd)){
-                    event.setCancelled(true);
-                    String perm = ItemManager.getItemPerm(k);
-                    if((perm != null && !perm.isEmpty()) && !player.hasPermission(perm)){
-                        return;
-                    }
-                    ItemStack is = ItemManager.getItem(k);
-                    player.getInventory().addItem(is);
-                }
-            }
-        }
-    }
     @EventHandler
     public void onClick(PlayerInteractEvent event){
         if(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR){

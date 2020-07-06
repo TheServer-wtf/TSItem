@@ -1,6 +1,6 @@
 name: TSItem
 main: hu.Pdani.TSItem.TSItemPlugin
-version: '1.1.1'
+version: '1.2.0'
 description: 'Custom item creator for TheServer.wtf'
 api-version: '1.16'
 authors: [Pdani001]
