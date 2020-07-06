@@ -4,6 +4,7 @@ import hu.Pdani.TSItem.listener.CommandListener;
 import hu.Pdani.TSItem.listener.InventoryListener;
 import hu.Pdani.TSItem.listener.PlayerListener;
 import hu.Pdani.TSItem.utils.MyCommand;
+import hu.Pdani.TSItem.utils.Updater;
 import hu.Pdani.TSMenu.TSMenuPlugin;
 import hu.Pdani.TSMenu.manager.GuiManager;
 import org.bukkit.ChatColor;
@@ -25,6 +26,12 @@ public class TSItemPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        Updater updater = new Updater("TheServer-wtf/TSItem");
+        if(updater.check()){
+            getLogger().warning("There is a new version ("+updater.getLatest()+") available! Download it at https://github.com/"+updater.getRepo());
+        } else {
+            getLogger().info("You are running the latest version.");
+        }
         Plugin tsmenu = getServer().getPluginManager().getPlugin("TSMenu");
         if((tsmenu instanceof TSMenuPlugin)){
             gm = ((TSMenuPlugin)tsmenu).getGm();
